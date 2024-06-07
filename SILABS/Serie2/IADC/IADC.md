@@ -98,7 +98,7 @@ La zone bleue dans le diagramme du haut représente le temps supplémentaire né
 ### Planification et déclencheurs
 
 L'IADC dispose de plusieurs options de déclenchement disponibles pour la file d'attente unique et la file d'attente d'analyse. Lorsqu'un déclencheur de conversion se produit et qu'aucune autre conversion n'est active ou en attente, la demande est traitée immédiatement. Si les files d'attente unique et d'analyse sont utilisées dans une application, il est possible de répondre aux demandes de conversion selon les besoins et de spécifier leur priorité.
-Le déclenchement de la conversion est configuré à l'aide de champs de bits dans le registre IADC_TRIGGER. Les champs SINGLETRIGSEL et SCANTRIGSEL spécifient respectivement la source de déclenchement pour la conversion Single et Scan. Les options pour la source de déclenchement sont :
+Le déclenchement de la conversion est configuré à l'aide de champs de bits dans le registre `IADC_TRIGGER`. Les champs `SINGLETRIGSEL` et `SCANTRIGSEL` spécifient respectivement la source de déclenchement pour la conversion Single et Scan. Les options pour la source de déclenchement sont :
 - IMMÉDIAT - Déclenchement depuis le logiciel. Ceci est utile pour déclencher des conversions à la demande à partir d'un logiciel sans échantillonnage spécifique.
 exigences de fréquence ou lancer des conversions continues à pleine vitesse.
 - TIMER - Utilisez la minuterie locale de l'IADC pour déclencher des conversions. Ceci est utile pour déclencher des conversions à intervalles précis.
@@ -115,22 +115,18 @@ tels que les entrées GPIO, les événements SYSRTC, etc.
 dans la table SCAN (spécifiée par le canal LESENSE) est converti par demande de conversion, et la file d'attente SCAN n'est pas disponible pour
 fonctionnement normal.
 
-Les sources de déclenchement uniques et par analyse peuvent être configurées pour générer une requête par déclencheur ou commencer des conversions continues. Le réglage de SINGLETRIGACTION sur ONCE effectuera une demande de conversion à chaque fois que le déclencheur unique sélectionné se produit, et un seul ADC
-la sortie sera convertie. Le réglage de SINGLETRIGACTION sur CONTINUOUS permet au déclencheur unique de commencer la première conversion, et
-lorsqu'une conversion est terminée, une nouvelle sera demandée immédiatement sans nécessiter de nouveau déclencheur. Les sélections et la configuration des canaux ne doivent pas être modifiées lorsque SINGLETRIGACTION est réglé sur CONTINUOUS. Cela peut produire des erreurs de conversion. L'analyse
+Les sources de déclenchement uniques et par analyse peuvent être configurées pour générer une requête par déclencheur ou commencer des conversions continues. Le réglage de `SINGLETRIGACTION` sur `ONCE` effectuera une demande de conversion à chaque fois que le déclencheur unique sélectionné se produit, et un seul ADC la sortie sera convertie. Le réglage de `SINGLETRIGACTION` sur `CONTINUOUS` permet au déclencheur unique de commencer la première conversion, et
+lorsqu'une conversion est terminée, une nouvelle sera demandée immédiatement sans nécessiter de nouveau déclencheur. Les sélections et la configuration des canaux ne doivent pas être modifiées lorsque `SINGLETRIGACTION` est réglé sur `CONTINUOUS`. Cela peut produire des erreurs de conversion. L'analyse
 la file d'attente doit être utilisée si un changement de canal ou de configuration est requis.
 
-Le champ SCANTRIGACTION fonctionne pour demander des analyses de conversion de la même manière. Régler SCANTRIGACTION sur ONCE fera en sorte que
-une requête à chaque fois que le déclencheur d'analyse sélectionné se produit, et l'IADC effectuera toutes les conversions spécifiées dans l'analyse une fois auparavant
-arrêt. Le réglage de SCANTRIGACTION sur CONTINUOUS permet au déclencheur d'analyse de lancer des analyses continues. Lorsqu'un cycle d'analyse est terminé, un nouveau sera immédiatement demandé sans nécessiter un nouveau déclenchement.
+Le champ `SCANTRIGACTION` fonctionne pour demander des analyses de conversion de la même manière. Régler `SCANTRIGACTION` sur `ONCE` fera en sorte que
+une requête à chaque fois que le déclencheur d'analyse sélectionné se produit, et l'IADC effectuera toutes les conversions spécifiées dans l'analyse une fois auparavant arrêt. Le réglage de `SCANTRIGACTION` sur `CONTINUOUS` permet au déclencheur d'analyser et de lancer des analyses continues. Lorsqu'un cycle d'analyse est terminé, un nouveau sera immédiatement demandé sans nécessiter un nouveau déclenchement.
 
-La priorité de conversion peut être ajustée à l'aide du bit SINGLETAILGATE. Par défaut, SINGLETAILGATE est défini sur TAILGATEOFF, ce qui signifie
-que les déclencheurs de conversion sont mis en file d'attente dans l'ordre dans lequel ils sont reçus. Tout déclencheur de conversion pour la file d'attente unique ou la file d'attente d'analyse sera
-lancer une conversion dès que possible. Si une conversion est déjà en cours ou en attente, la nouvelle conversion sera traitée après
-l'opération en cours.
+La priorité de conversion peut être ajustée à l'aide du bit `SINGLETAILGATE`. Par défaut, `SINGLETAILGATE` est défini sur `TAILGATEOFF`, ce qui signifie
+que les déclencheurs de conversion sont mis en file d'attente dans l'ordre dans lequel ils sont reçus. Tout déclencheur de conversion pour la file d'attente unique ou la file d'attente de scan sera de lancer une conversion dès que possible. Si une conversion est déjà en cours ou en attente, la nouvelle conversion sera traitée après l'opération en cours.
 
-La définition de SINGLETAILGATE sur TAILGATEON donne la priorité ultime à la file d'attente d'analyse. L'IADC n'effectuera que des conversions uniques
-immédiatement après la fin d'une analyse. Cela permet aux systèmes d'utiliser la file d'attente d'analyse pour les conversions hautement prioritaires avec des exigences de timing strictes, et la file d'attente unique pour les événements de conversion à la demande de faible priorité. Notez que ce paramètre ne doit être utilisé que lorsque le déclenchement des conversions de numérisation est garanti. Si aucune séquence d'analyse n'est déclenchée, tout déclencheur de conversion unique restera en attente indéfiniment. Il est également important de noter que s'il n'y a pas suffisamment de temps entre les conversions par numérisation pour effectuer une seule conversion, la conversion par numérisation suivante sera retardée.
+La définition de `SINGLETAILGATE` sur `TAILGATEON` donne la priorité ultime à la file d'attente de scan. L'IADC n'effectuera que des conversions uniques
+immédiatement après la fin d'une analyse. Cela permet aux systèmes d'utiliser la file d'attente de scan pour les conversions hautement prioritaires avec des exigences de timing strictes, et la file d'attente unique pour les événements de conversion à la demande de faible priorité. Notez que ce paramètre ne doit être utilisé que lorsque le déclenchement des conversions de numérisation est garanti. Si aucune séquence de scan n'est déclenchée, tout déclencheur de conversion unique restera en attente indéfiniment. Il est également important de noter que s'il n'y a pas suffisamment de temps entre les conversions par numérisation pour effectuer une seule conversion, la conversion par numérisation suivante sera retardée.
 
 #### Exemples de déclenchement de conversion
 
@@ -149,13 +145,15 @@ analyse. La figure 22.8 Exemple d'analyse périodique à la page 719 montre la s
 
 ##### Exemples de talonnage
 
-Un exemple utilisant le talonnage de conversion est présenté dans la Figure 22.9 Conversion simple avec le talonnage activé à la page 720. Dans l'exemple, la file d'attente Scan est configurée pour déclencher périodiquement une conversion à deux canaux sur le temporisateur local IADC, tandis que la file d'attente unique est configurée pour se déclencher sur  demande du logiciel. Lorsqu'une seule conversion est demandée, il attend la fin de la séquence d'analyse, puis la conversion unique est effectuée. Les conversions d'analyse utilisent la configuration 0 et la conversion unique utilise la configuration 1, donc un délai de préchauffage est inséré entre la fin de l'analyse et le début du cycle de conversion unique. Notez que cet exemple laisse suffisamment de temps entre les conversions d’analyse IADC pour qu’une seule conversion se produise, et qu’aucune conversion d’analyse n’est retardée.
+Un exemple utilisant le talonnage de conversion est présenté dans la Figure 22.9 Conversion simple avec le talonnage activé à la page 720. 
+
+Dans l'exemple, la file d'attente scan est configurée pour déclencher périodiquement une conversion à deux canaux sur le temporisateur local IADC, tandis que la file d'attente unique est configurée pour se déclencher sur  demande du logiciel. Lorsqu'une seule conversion est demandée, il attend la fin de la séquence d'analyse, puis la conversion unique est effectuée. Les conversions d'analyse utilisent la configuration 0 et la conversion unique utilise la configuration 1, donc un délai de préchauffage est inséré entre la fin de l'analyse et le début du cycle de conversion unique. Notez que cet exemple laisse suffisamment de temps entre les conversions d’analyse IADC pour qu’une seule conversion se produise, et qu’aucune conversion d’analyse n’est retardée.
 
 ![Simple Conversion with Tailgating Enabled](image-17.png)
 
 Un autre exemple, présenté dans la Figure 22.10 Conversions avec le talonnage désactivé à la page 721, montre comment les demandes sont traitées sur les différentes files d'attente de conversion avec le talonnage désactivé.
 
-Dans cet exemple, la file d'attente de scrutation est déclenchée sur le temporisateur interne tandis que la file d'attente unique est déclenchée sur un front positif PRS. Le talonnage n’étant pas activé, les files d’attente seront desservies selon le principe du premier arrivé, premier servi. Le premier déclencheur de file d'attente unique se situe entre deux déclencheurs de file d'attente d'analyse et n'interfère pas avec la synchronisation de la file d'attente d'analyse. Le deuxième déclenchement de file d'attente unique se produit juste avant le déclenchement de la file d'attente d'analyse. L'IADC terminera cette conversion de file d'attente unique et retardera les prochaines conversions de file d'attente d'analyse.
+Dans cet exemple, la file d'attente de scrutation est déclenchée sur le TIMER interne tandis que la file d'attente unique est déclenchée sur un front positif PRS. Le talonnage n’étant pas activé, les files d’attente seront desservies selon le principe du premier arrivé, premier servi. Le premier déclencheur de file d'attente unique se situe entre deux déclencheurs de file d'attente d'analyse et n'interfère pas avec la synchronisation de la file d'attente d'analyse. Le deuxième déclenchement de file d'attente unique se produit juste avant le déclenchement de la file d'attente d'analyse. L'IADC terminera cette conversion de file d'attente unique et retardera les prochaines conversions de file d'attente d'analyse.
 
 ![Conversion with Tailgating Disabled](image-18.png)
 
