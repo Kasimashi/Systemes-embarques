@@ -1,4 +1,4 @@
-#Introduction
+# Introduction
 La situation est la suivante :
 
 cinq philosophes (initialement mais il peut y en avoir beaucoup plus) se trouvent autour d'une table ;
